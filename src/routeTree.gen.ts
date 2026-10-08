@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as WidgetRouteImport } from './routes/widget'
+import { Route as ApiTidesRouteImport } from './routes/api/tides'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,31 +23,40 @@ const WidgetRoute = WidgetRouteImport.update({
   path: '/widget',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiTidesRoute = ApiTidesRouteImport.update({
+  id: '/api/tides',
+  path: '/api/tides',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/widget': typeof WidgetRoute
+  '/api/tides': typeof ApiTidesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/widget': typeof WidgetRoute
+  '/api/tides': typeof ApiTidesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/widget': typeof WidgetRoute
+  '/api/tides': typeof ApiTidesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/widget'
+  fullPaths: '/' | '/widget' | '/api/tides'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/widget'
-  id: '__root__' | '/' | '/widget'
+  to: '/' | '/widget' | '/api/tides'
+  id: '__root__' | '/' | '/widget' | '/api/tides'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   WidgetRoute: typeof WidgetRoute
+  ApiTidesRoute: typeof ApiTidesRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +75,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WidgetRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/tides': {
+      id: '/api/tides'
+      path: '/api/tides'
+      fullPath: '/api/tides'
+      preLoaderRoute: typeof ApiTidesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   WidgetRoute: WidgetRoute,
+  ApiTidesRoute: ApiTidesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

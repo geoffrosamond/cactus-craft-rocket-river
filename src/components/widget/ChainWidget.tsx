@@ -9,6 +9,7 @@ import {
   ratioText,
 } from "@/lib/anchor/model";
 import { fieldClass, ghostClass, primaryClass } from "@/components/course/ui";
+import { getPittwaterTides } from "@/lib/tides/pittwater";
 
 const PRESETS = [
   { ratio: 5, label: "5:1 settled" },
@@ -28,6 +29,8 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
 export function ChainWidget({ framed = false }: { framed?: boolean }) {
   const [value, setValue] = useState<PlanInput>(() => clonePlan(ASSESSMENT));
   const [text, setText] = useState<Record<string, string>>({});
+  const [tideNote, setTideNote] = useState<string | null>(null);
+  const [loadingTides, setLoadingTides] = useState(false);
   const plan = buildPlan(value);
 
   const patch = (partial: Partial<PlanInput>) => {
@@ -54,6 +57,31 @@ export function ChainWidget({ framed = false }: { framed?: boolean }) {
         return next;
       }),
   });
+
+  const loadTides = async () => {
+    setLoadingTides(true);
+    setTideNote(null);
+    try {
+      const result = await getPittwaterTides();
+      if (!result.ok) {
+        setTideNote(result.error);
+        return;
+      }
+      setText((prev) => {
+        const next = { ...prev };
+        for (const key of Object.keys(next)) {
+          if (key.startsWith("tide-")) delete next[key];
+        }
+        return next;
+      });
+      patch({ extremes: result.extremes });
+      setTideNote(`WillyWeather · ${result.location}`);
+    } catch {
+      setTideNote("WillyWeather did not answer.");
+    } finally {
+      setLoadingTides(false);
+    }
+  };
 
   return (
     <section className={framed ? "bg-bg text-fg" : ""}>
@@ -141,6 +169,10 @@ export function ChainWidget({ framed = false }: { framed?: boolean }) {
 
         <fieldset>
           <legend className="mb-2 text-xs tracking-wide text-muted">Tide extremes for the stay</legend>
+          <button type="button" className={`${primaryClass} mb-3 w-full`} disabled={loadingTides} onClick={loadTides}>
+            {loadingTides ? "Loading Pittwater tides" : "Use today’s Pittwater tides"}
+          </button>
+          {tideNote ? <p className="mb-3 text-sm text-muted">{tideNote}</p> : null}
           <div className="space-y-2">
             {value.extremes.map((point, index) => (
               <div key={index} className="grid grid-cols-[1fr_1fr_auto] items-end gap-2">

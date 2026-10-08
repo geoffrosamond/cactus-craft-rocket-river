@@ -104,6 +104,8 @@
     </fieldset>
     <fieldset>
       <legend>Tide extremes for the stay</legend>
+      <button type="button" id="willy">Use today’s Pittwater tides</button>
+      <p class="note" id="willy-note"></p>
       <div class="tide" id="tides"></div>
       <button type="button" id="add" style="margin-top:0.75rem">Add a tide</button>
     </fieldset>
@@ -288,6 +290,28 @@ document.getElementById("scopes").addEventListener("click", (event) => {
     item.setAttribute("aria-pressed", item === button ? "true" : "false");
   });
   render();
+});
+document.getElementById("willy").addEventListener("click", async () => {
+  const note = document.getElementById("willy-note");
+  const button = document.getElementById("willy");
+  button.disabled = true;
+  note.textContent = "Loading Pittwater tides";
+  try {
+    const response = await fetch("/api/tides");
+    const result = await response.json();
+    if (!result.ok) {
+      note.textContent = result.error || "WillyWeather did not return a tide chart.";
+      return;
+    }
+    tides = result.extremes.map((point) => [point.time, String(point.height)]);
+    paintTides();
+    render();
+    note.textContent = "WillyWeather · " + result.location;
+  } catch {
+    note.textContent = "Open this page on the AllSail site to load WillyWeather. A saved file cannot reach the feed.";
+  } finally {
+    button.disabled = false;
+  }
 });
 document.getElementById("add").addEventListener("click", () => {
   tides.push(["12:00", "1"]);

@@ -12,6 +12,7 @@ import {
   ratioText,
 } from "@/lib/anchor/model";
 import { fieldClass, ghostClass, primaryClass } from "@/components/course/ui";
+import { getPittwaterTides } from "@/lib/tides/pittwater";
 
 type Props = {
   value: PlanInput;
@@ -44,6 +45,8 @@ export function Calculator({ value, onChange, recorded, onRecord }: Props) {
   const [offset, setOffset] = useState("0.4");
   const [tideNow, setTideNow] = useState("1.6");
   const [text, setText] = useState<Record<string, string>>({});
+  const [tideNote, setTideNote] = useState<string | null>(null);
+  const [loadingTides, setLoadingTides] = useState(false);
 
   const patch = (partial: Partial<PlanInput>) => {
     onChange({ ...value, ...partial, extremes: (partial.extremes ?? value.extremes).map((point) => ({ ...point })) });
@@ -80,6 +83,31 @@ export function Calculator({ value, onChange, recorded, onRecord }: Props) {
         return next;
       });
       patch({ chartDepth: Math.round(depth * 100) / 100 });
+    }
+  };
+
+  const loadTides = async () => {
+    setLoadingTides(true);
+    setTideNote(null);
+    try {
+      const result = await getPittwaterTides();
+      if (!result.ok) {
+        setTideNote(result.error);
+        return;
+      }
+      setText((prev) => {
+        const next = { ...prev };
+        for (const key of Object.keys(next)) {
+          if (key.startsWith("tide-")) delete next[key];
+        }
+        return next;
+      });
+      patch({ extremes: result.extremes });
+      setTideNote(`WillyWeather · ${result.location}`);
+    } catch {
+      setTideNote("WillyWeather did not answer.");
+    } finally {
+      setLoadingTides(false);
     }
   };
 
@@ -163,6 +191,10 @@ export function Calculator({ value, onChange, recorded, onRecord }: Props) {
 
       <fieldset>
         <legend className="mb-2 text-sm text-fg">Low and high water on the chart</legend>
+        <button type="button" className={`${primaryClass} mb-3`} disabled={loadingTides} onClick={loadTides}>
+          {loadingTides ? "Loading Pittwater tides" : "Use today’s Pittwater tides"}
+        </button>
+        {tideNote ? <p className="mb-3 text-sm text-muted">{tideNote}</p> : null}
         <div className="space-y-3">
           {value.extremes.map((point, index) => (
             <div key={index} className="grid grid-cols-2 gap-2">
