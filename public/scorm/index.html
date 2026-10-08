@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>High Water Scope</title>
+    <link rel="stylesheet" href="course.css" />
+  </head>
+  <body>
+    <div id="app"></div>
+    <template id="shell">
+      <header>
+        <div class="bar">
+          <div>
+            <p class="title">ALL<span class="sail">SAIL</span></p>
+            <p class="sub">PITTWATER · CHURCH POINT</p>
+          </div>
+          <span class="pill" id="pill">In progress</span>
+        </div>
+        <div class="chips" id="chips"></div>
+      </header>
+      <main>
+        <section data-step="0">
+          <h1>Scope the high. Swing the low.</h1>
+          <p class="muted">From TMG Yachts’ film of Joe Fox anchoring a Lagoon 42. He shows the six parts of the job and the chain multiples he uses. He does not run a 24-hour tide. This module will not call a deployment successful until you have.</p>
+          <p><a href="https://youtu.be/i_SqmhP4hPU">Watch the film</a></p>
+          <div class="grid two">
+            <div class="card"><p class="muted">Scope ratio, at high water</p><p class="title">Rode ÷ roller depth</p><p class="muted">Deepest moment of the next 24 hours, including the bow roller.</p></div>
+            <div class="card"><p class="muted">Swing ratio, at low water</p><p class="title">Reach ÷ roller depth</p><p class="muted">Shallowest moment. The stern is still a boat-length past that reach.</p></div>
+          </div>
+          <p class="muted">Passed means 80% on the quiz and a recorded plan for the assessment anchorage. The sample tides are a worked chart, not a forecast.</p>
+        </section>
+        <section data-step="1">
+          <h1>The six components in the film</h1>
+          <p class="muted">Draft on the Lagoon 42 is just over 1.2 m. The wind in the film is a light northerly. He still plans for 25 knots.</p>
+          <ol class="steps">
+            <li><b>01</b><div><strong>The anchor.</strong><p class="muted">Over the roller and clear before you commit.</p></div></li>
+            <li><b>02</b><div><strong>Wind and tidal flow.</strong><p class="muted">Which way you will lie, and how much water you will have later. He anchors head to wind.</p></div></li>
+            <li><b>03</b><div><strong>How much chain.</strong><p class="muted">Light and benign: 3–4× depth. Around 20 knots: 5–7×. Only if the anchor is set.</p></div></li>
+            <li><b>04</b><div><strong>Setting it.</strong><p class="muted">Reverse until the chain is tight at a shallow angle, ease off, feel the boat spring back, then a transit on two fixed marks.</p></div></li>
+            <li><b>05</b><div><strong>The bridle.</strong><p class="muted">Load shared between the hulls. Centre of effort moves about 5–6 m forward.</p></div></li>
+            <li><b>06</b><div><strong>Communication.</strong><p class="muted">Bow and helm are about 8 m apart. Agree the signals before you enter.</p></div></li>
+          </ol>
+        </section>
+        <section data-step="2">
+          <h1>The multiple is applied at high water</h1>
+          <p class="formula">D(t) = chart depth + tide(t) + freeboard<br />Working rode L = scope target × the largest D in the stay</p>
+          <p>Freeboard is in the sum because the chain leaves the roller, not the waterline. On the assessment chart that is 4.0 + 1.9 + 1.2 = 7.1 m, and 7 × 7.1 = 49.7 m. Seven times the chart depth alone is 28 m, which is about 3.9:1 when the tide is in — not 7:1.</p>
+          <p>After the hook is on, veer another 6 m so the bridle takes the load. That loop is not scope. Total off the gypsy: 55.7 m.</p>
+        </section>
+        <section data-step="3">
+          <h1>The circle is largest at low water</h1>
+          <p class="formula">Swing ratio W = √(scope² − 1)<br />Swing radius = √(L² − D²) + bridle reach + length overall</p>
+          <p>Low water on the assessment stay is 0.3 m at 03:10. Roller depth 5.5 m. Horizontal reach 49.4 m. Swing ratio about 8.98:1. Radius 49.4 + 5.5 + 12.8 = 67.7 m.</p>
+          <p>The bridle damps yaw. It does not cancel the circle. Do not anchor between mooring buoys. Under-keel at that low is 3.1 m on 4.3 m of water — this module still wants at least 0.5 m.</p>
+        </section>
+        <section data-step="4">
+          <h1>The 24-hour chart</h1>
+          <p class="muted">Scope is taken from the highest roller-depth in the window. Swing is taken from the lowest.</p>
+          <div class="rowbtns">
+            <button class="ghost" id="load-assessment" type="button">Assessment anchorage</button>
+            <button class="ghost" id="load-trap" type="button">60 m swing trap</button>
+          </div>
+          <div id="calc" class="grid two" style="margin-top:0.8rem">
+            <label>Chart depth<input id="chartDepth" type="text" inputmode="decimal" /></label>
+            <label>Bow roller above the water<input id="freeboard" type="text" inputmode="decimal" /></label>
+            <label>Length overall<input id="loa" type="text" inputmode="decimal" /></label>
+            <label>Draft<input id="draft" type="text" inputmode="decimal" /></label>
+            <label>Bridle reach forward<input id="bridleForward" type="text" inputmode="decimal" /></label>
+            <label>Bridle loop to veer<input id="bridleLoop" type="text" inputmode="decimal" /></label>
+            <label>Chain on board<input id="chain" type="text" inputmode="decimal" /></label>
+            <label>Clearance from the anchor<input id="clearance" type="text" inputmode="decimal" /></label>
+            <label>Stay starts<input id="stayStart" type="time" /></label>
+          </div>
+          <fieldset style="border:0;padding:0;margin:0.8rem 0">
+            <legend>Scope target</legend>
+            <label class="check"><input type="radio" name="scope" value="4" /> 4:1 light, attended</label>
+            <label class="check"><input type="radio" name="scope" value="5" /> 5:1 settled night</label>
+            <label class="check"><input type="radio" name="scope" value="7" /> 7:1 about 20 kn</label>
+            <label class="check"><input type="radio" name="scope" value="8" /> 8:1 exposed</label>
+          </fieldset>
+          <div class="grid two">
+            <label>Tide time<input id="t0" type="time" /></label><label>Height<input id="h0" type="text" inputmode="decimal" /></label>
+            <label>Tide time<input id="t1" type="time" /></label><label>Height<input id="h1" type="text" inputmode="decimal" /></label>
+            <label>Tide time<input id="t2" type="time" /></label><label>Height<input id="h2" type="text" inputmode="decimal" /></label>
+            <label>Tide time<input id="t3" type="time" /></label><label>Height<input id="h3" type="text" inputmode="decimal" /></label>
+          </div>
+          <label class="check" style="margin-top:0.8rem"><input id="mooring" type="checkbox" /> I would be dropping between mooring buoys</label>
+          <div id="result" style="margin-top:1rem"></div>
+        </section>
+        <section data-step="5">
+          <h1>Set it, then unload the windlass</h1>
+          <ol class="steps">
+            <li><b>01</b><div><strong>Read the bay.</strong><p class="muted">Contours, a flat patch, no hole between mooring buoys.</p></div></li>
+            <li><b>02</b><div><strong>Stop head to wind, then drop.</strong><p class="muted">Once the anchor is on the bottom, motor astern so the chain lays out.</p></div></li>
+            <li><b>03</b><div><strong>Know when it has landed.</strong><p class="muted">Hanging, the chain is tight across the deck. On the bottom, that tension goes.</p></div></li>
+            <li><b>04</b><div><strong>Set, then prove it.</strong><p class="muted">Tight chain, shallow angle, the boat springs forward, transit on fixed marks.</p></div></li>
+            <li><b>05</b><div><strong>Hook over a whole link.</strong><p class="muted">Pin home. Do not pass it through the link. Veer 5–6 m. The windlass is no longer towing.</p></div></li>
+            <li><b>06</b><div><strong>Leave the same way.</strong><p class="muted">Engines on, bridle up first, edge forward, do not drive over the chain.</p></div></li>
+          </ol>
+          <p class="muted">No counter: 1 metre every 2 seconds. 55.7 m is about 1 min 51 s.</p>
+        </section>
+        <section data-step="6"><div id="quiz"></div></section>
+        <section data-step="7"><div id="record-body"></div></section>
+      </main>
+      <nav id="nav">
+        <div class="navrow">
+          <button class="ghost" id="back" type="button">Back</button>
+          <button class="primary" id="next" type="button">Continue</button>
+        </div>
+      </nav>
+    </template>
+    <script src="engine.js"></script>
+  </body>
+</html>

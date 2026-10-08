@@ -1,0 +1,36 @@
+{
+  "url": "http://127.0.0.1:8080/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "High Water Scope",
+      "hasCanvas": false,
+      "bodyTextLen": 1406,
+      "bodyTextHash": "3d577c0d28773c2f769ae5bddeb273a13bcb0d21985d14859dbde5dd1dab4dee",
+      "bodyTextPrefix": "ALLSAIL PITTWATER · CHURCH POINT YACHT & CATAMARAN CHARTERS Foll",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/brand-preview.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "High Water Scope",
+      "hasCanvas": false,
+      "bodyTextLen": 1379,
+      "bodyTextHash": "89a8c393b3ab2de1ae1e10fe0f6e1a35960dac9d928de94fa868f18de91e1fbc",
+      "bodyTextPrefix": "ALLSAIL PITTWATER · CHURCH POINT Follow-on Scope Approach IMPULS",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/brand-preview-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/brand-preview.json"
+}

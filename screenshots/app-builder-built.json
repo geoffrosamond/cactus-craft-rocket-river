@@ -1,0 +1,38 @@
+{
+  "url": "http://127.0.0.1:8081/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "High Water Scope",
+      "hasCanvas": false,
+      "bodyTextLen": 1363,
+      "bodyTextHash": "be6777867d083be14decee1961f4077695d2e365ce976d0bebd0d686df31393f",
+      "bodyTextPrefix": "Stern to the wind AllSail · TMG Yachts Australia Follow-on Scope",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-built.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "High Water Scope",
+      "hasCanvas": false,
+      "bodyTextLen": 1363,
+      "bodyTextHash": "be6777867d083be14decee1961f4077695d2e365ce976d0bebd0d686df31393f",
+      "bodyTextPrefix": "Stern to the wind AllSail · TMG Yachts Australia Follow-on Scope",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-built-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/app-builder-built.json",
+  "divergesFromBaseline": false,
+  "baselineReasons": []
+}

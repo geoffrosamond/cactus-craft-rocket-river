@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #f6f2ec; }
+  .og, .xb { position: relative; overflow: hidden; background: #f6f2ec; color: #0b2430; }
+  .og { width: 1200px; height: 630px; }
+  .xb { width: 1200px; height: 264px; margin-top: 20px; }
+  .photo { position: absolute; top: 0; bottom: 0; right: 0; overflow: hidden; }
+  .og .photo { width: 640px; }
+  .xb .photo { width: 620px; }
+  .photo img { width: 100%; height: 100%; object-fit: cover; object-position: 62% 48%; }
+  .copy { position: absolute; z-index: 2; }
+  .og .copy { left: 56px; top: 64px; width: 480px; }
+  .xb .copy { left: 40px; top: 28px; width: 500px; }
+  .brand { font-family: "Times New Roman", Times, serif; letter-spacing: -0.03em; line-height: 1; }
+  .og .brand { font-size: 34px; }
+  .xb .brand { font-size: 22px; }
+  .sail { color: #d45a42; }
+  .kicker {
+    margin-top: 8px;
+    font-family: Helvetica, Arial, sans-serif;
+    letter-spacing: 0.18em;
+    color: #0e4a5c;
+  }
+  .og .kicker { font-size: 13px; }
+  .xb .kicker { font-size: 11px; margin-top: 6px; }
+  h1 {
+    font-family: "Times New Roman", Times, serif;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 0.96;
+  }
+  .og h1 { margin-top: 72px; font-size: 52px; }
+  .xb h1 { margin-top: 22px; font-size: 32px; }
+  h1 span { display: block; color: #d45a42; }
+  .og h1 span { margin-top: 12px; font-size: 44px; }
+  .xb h1 span { margin-top: 6px; font-size: 28px; }
+</style>
+</head>
+<body>
+  <div class="og" id="og">
+    <div class="photo"><img src="boat.jpg" alt=""></div>
+    <div class="copy">
+      <p class="brand">ALL<span class="sail">SAIL</span></p>
+      <p class="kicker">PITTWATER · CHURCH POINT</p>
+      <h1>TMG’s Safe Anchoring<span>– Lagoon 42</span></h1>
+    </div>
+  </div>
+  <div class="xb" id="xb">
+    <div class="photo"><img src="boat.jpg" alt=""></div>
+    <div class="copy">
+      <p class="brand">ALL<span class="sail">SAIL</span></p>
+      <p class="kicker">PITTWATER · CHURCH POINT</p>
+      <h1>TMG’s Safe Anchoring<span>– Lagoon 42</span></h1>
+    </div>
+  </div>
+</body>
+</html>

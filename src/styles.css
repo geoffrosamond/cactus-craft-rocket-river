@@ -1,0 +1,44 @@
+@import "tailwindcss";
+@import "@fontsource/outfit/latin-400.css";
+@import "@fontsource/outfit/latin-500.css";
+@import "@fontsource/outfit/latin-600.css";
+
+@theme {
+  --font-sans: "Outfit", Helvetica, Arial, sans-serif;
+  --font-serif: "Times New Roman", Times, "Liberation Serif", serif;
+  --color-bg: #f6f2ec;
+  --color-surface: #efe9dd;
+  --color-surface-2: #e7dfd0;
+  --color-fg: #0b2430;
+  --color-muted: #0e4a5c;
+  --color-line: #d8d0c2;
+  --color-brass: #d45a42;
+  --color-brass-ink: #0b2430;
+  --color-fail: #8c2f2f;
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+  }
+  body {
+    margin: 0;
+    overflow-x: hidden;
+    background: var(--color-bg);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    line-height: 1.5;
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled),
+  [role="radio"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+}
