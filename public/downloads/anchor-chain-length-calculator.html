@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anchor Chain Length Calculator — AllSail</title>
+<style>
+  :root {
+    --bg: #f6f2ec;
+    --surface: #efe9dd;
+    --fg: #0b2430;
+    --muted: #0e4a5c;
+    --line: #d8d0c2;
+    --coral: #d45a42;
+    --fail: #8c2f2f;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+  }
+  main { max-width: 36rem; margin: 0 auto; }
+  header { padding: 1.25rem 1rem 1rem; border-bottom: 1px solid var(--line); }
+  .brand { margin: 0; font-family: "Times New Roman", Times, serif; font-size: 2rem; line-height: 1; letter-spacing: -0.03em; }
+  .brand span { color: var(--coral); }
+  .kicker { margin: 0.35rem 0 0; font-size: 0.75rem; letter-spacing: 0.16em; color: var(--muted); }
+  h1 { margin: 1.25rem 0 0; font-family: "Times New Roman", Times, serif; font-weight: 400; font-size: 1.85rem; line-height: 1.1; }
+  header p.lead { margin: 0.5rem 0 0; color: var(--muted); font-size: 0.95rem; }
+  form, .out { padding: 1rem; }
+  .result { background: var(--fg); color: var(--bg); padding: 1.25rem 1rem; }
+  .result .label { margin: 0; font-size: 0.75rem; letter-spacing: 0.16em; color: #e7dfd0; }
+  .result .metres { margin: 0.25rem 0 0; font-family: "Times New Roman", Times, serif; font-size: 3.25rem; line-height: 1; color: var(--coral); }
+  .result p { margin: 0.75rem 0 0; font-size: 0.95rem; }
+  .result .quiet { color: #e7dfd0; }
+  .ok { color: var(--coral); }
+  .bad { color: #f6f2ec; }
+  .error { border: 1px solid var(--fail); color: var(--fail); padding: 1rem; font-size: 0.95rem; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+  label { display: block; min-width: 0; }
+  label span { display: block; margin-bottom: 0.25rem; font-size: 0.75rem; letter-spacing: 0.04em; color: var(--muted); }
+  input {
+    width: 100%;
+    height: 2.75rem;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    color: var(--fg);
+    padding: 0 0.75rem;
+    font: inherit;
+    font-size: 1rem;
+  }
+  fieldset { border: 0; margin: 1rem 0 0; padding: 0; }
+  legend { margin-bottom: 0.5rem; font-size: 0.75rem; letter-spacing: 0.04em; color: var(--muted); }
+  .scopes, .tide { display: grid; gap: 0.5rem; }
+  .scopes { grid-template-columns: repeat(3, 1fr); }
+  button {
+    min-height: 2.75rem;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--fg);
+    font: inherit;
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 0.4rem 0.5rem;
+  }
+  button[aria-pressed="true"] { background: var(--coral); color: var(--fg); border-color: var(--coral); }
+  .tide-row { display: grid; grid-template-columns: 1fr 1fr auto; gap: 0.5rem; align-items: end; }
+  .note { color: var(--muted); font-size: 0.8rem; }
+  @media (max-width: 520px) {
+    .grid { grid-template-columns: 1fr; }
+    .scopes { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <p class="brand">ALL<span>SAIL</span></p>
+    <p class="kicker">PITTWATER · CHURCH POINT</p>
+    <h1>Anchor Chain Length Calculator</h1>
+    <p class="lead">The chain is scoped to the highest water in the next 24 hours. Swing is checked at the lowest.</p>
+  </header>
+  <div class="out" id="out"></div>
+  <form id="calc">
+    <div class="grid">
+      <label><span>Chart depth, m</span><input name="chartDepth" inputmode="decimal" value="4"></label>
+      <label><span>Bow roller above water, m</span><input name="freeboard" inputmode="decimal" value="1.2"></label>
+      <label><span>Chain on board, m</span><input name="chainOnBoard" inputmode="decimal" value="80"></label>
+      <label><span>Bridle loop, m</span><input name="bridleLoop" inputmode="decimal" value="6"></label>
+      <label><span>Length overall, m</span><input name="loa" inputmode="decimal" value="12.8"></label>
+      <label><span>Bridle reach forward, m</span><input name="bridleForward" inputmode="decimal" value="5.5"></label>
+      <label><span>Room from the anchor, m</span><input name="clearance" inputmode="decimal" value="80"></label>
+      <label><span>Stay starts</span><input name="stayStart" type="time" value="16:00"></label>
+    </div>
+    <fieldset>
+      <legend>Scope</legend>
+      <div class="scopes" id="scopes">
+        <button type="button" data-scope="5">5:1 settled</button>
+        <button type="button" data-scope="7" aria-pressed="true">7:1 about 20 kn</button>
+        <button type="button" data-scope="8">8:1 exposed</button>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Tide extremes for the stay</legend>
+      <div class="tide" id="tides"></div>
+      <button type="button" id="add" style="margin-top:0.75rem">Add a tide</button>
+    </fieldset>
+    <p class="note">Working chain is scope times chart depth, plus the highest tide of the stay, plus the height of the bow roller. The bridle loop is extra chain. It is not scope.</p>
+  </form>
+</main>
+<script>
+const DEFAULT_TIDES = [
+  ["03:10", "0.3"],
+  ["09:25", "1.9"],
+  ["15:40", "0.4"],
+  ["21:55", "1.7"]
+];
+const DRAFT = 1.22;
+const KEEL = 0.5;
+let scopeTarget = 7;
+let tides = DEFAULT_TIDES.map((row) => row.slice());
+
+function parseClock(value) {
+  const match = /^(\d{1,2}):(\d{2})$/.exec(String(value).trim());
+  if (!match) return null;
+  const hour = Number(match[1]);
+  const minute = Number(match[2]);
+  if (hour > 23 || minute > 59) return null;
+  return hour * 60 + minute;
+}
+function formatClock(minutes) {
+  const wrapped = ((Math.round(minutes) % 1440) + 1440) % 1440;
+  const hour = Math.floor(wrapped / 60);
+  const minute = wrapped % 60;
+  return String(hour).padStart(2, "0") + ":" + String(minute).padStart(2, "0");
+}
+function metres(value) {
+  return value.toFixed(1) + " m";
+}
+function tideHeight(atMin, extremes) {
+  const span = 1440;
+  const points = [];
+  for (const shift of [-span, 0, span, span * 2]) {
+    for (const extreme of extremes) points.push({ min: extreme.min + shift, height: extreme.height });
+  }
+  points.sort((a, b) => a.min - b.min);
+  let t = atMin;
+  while (t < points[0].min) t += span;
+  while (t > points[points.length - 1].min) t -= span;
+  for (let i = 0; i < points.length - 1; i++) {
+    const left = points[i];
+    const right = points[i + 1];
+    if (t >= left.min && t <= right.min) {
+      const spanMin = right.min - left.min || 1;
+      const u = (t - left.min) / spanMin;
+      return left.height + (right.height - left.height) * (1 - Math.cos(Math.PI * u)) / 2;
+    }
+  }
+  return points[points.length - 1].height;
+}
+function windowTide(startMin, extremes) {
+  const end = startMin + 1440;
+  let maxH = tideHeight(startMin, extremes);
+  let minH = maxH;
+  let maxAt = startMin;
+  let minAt = startMin;
+  const consider = (t) => {
+    const height = tideHeight(t, extremes);
+    if (height > maxH) { maxH = height; maxAt = t; }
+    if (height < minH) { minH = height; minAt = t; }
+  };
+  consider(end);
+  for (const extreme of extremes) {
+    for (const shift of [-1440, 0, 1440, 2880]) {
+      const t = extreme.min + shift;
+      if (t >= startMin && t <= end) consider(t);
+    }
+  }
+  return { maxH, minH, maxAt, minAt };
+}
+function readNumber(form, name) {
+  const value = Number(form.elements[name].value);
+  return Number.isFinite(value) ? value : NaN;
+}
+function paintTides() {
+  const box = document.getElementById("tides");
+  box.innerHTML = "";
+  tides.forEach((row, index) => {
+    const wrap = document.createElement("div");
+    wrap.className = "tide-row";
+    wrap.innerHTML =
+      '<label><span>Time</span><input type="time" data-i="' + index + '" data-k="time" value="' + row[0] + '"></label>' +
+      '<label><span>Height, m</span><input inputmode="decimal" data-i="' + index + '" data-k="height" value="' + row[1] + '"></label>';
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.textContent = "Remove";
+    remove.disabled = tides.length <= 2;
+    remove.addEventListener("click", () => {
+      tides.splice(index, 1);
+      paintTides();
+      render();
+    });
+    wrap.appendChild(remove);
+    box.appendChild(wrap);
+  });
+  box.querySelectorAll("input").forEach((input) => {
+    input.addEventListener("input", () => {
+      tides[Number(input.dataset.i)][input.dataset.k === "time" ? 0 : 1] = input.value;
+      render();
+    });
+  });
+}
+function render() {
+  const form = document.getElementById("calc");
+  const out = document.getElementById("out");
+  const errors = [];
+  const chartDepth = readNumber(form, "chartDepth");
+  const freeboard = readNumber(form, "freeboard");
+  const chainOnBoard = readNumber(form, "chainOnBoard");
+  const bridleLoop = readNumber(form, "bridleLoop");
+  const loa = readNumber(form, "loa");
+  const bridleForward = readNumber(form, "bridleForward");
+  const clearance = readNumber(form, "clearance");
+  const start = parseClock(form.elements.stayStart.value);
+  if (!(chartDepth > 0)) errors.push("Chart depth must be greater than zero.");
+  if (!(freeboard >= 0)) errors.push("Bow-roller height cannot be negative.");
+  if (!(chainOnBoard > 0)) errors.push("Chain on board must be greater than zero.");
+  if (!(bridleLoop >= 0)) errors.push("Bridle loop cannot be negative.");
+  if (!(loa > 0)) errors.push("Length overall must be greater than zero.");
+  if (!(bridleForward >= 0)) errors.push("Bridle reach cannot be negative.");
+  if (!(clearance > 0)) errors.push("Room from the anchor must be greater than zero.");
+  if (scopeTarget < 4) errors.push("Scope target must be at least 4:1.");
+  if (start === null) errors.push("Stay start must be a time like 16:00.");
+  const extremes = [];
+  const seen = new Set();
+  tides.forEach((row) => {
+    const min = parseClock(row[0]);
+    const height = Number(row[1]);
+    if (min === null) errors.push("Tide time “" + (row[0] || "blank") + "” is not HH:MM.");
+    else if (seen.has(min)) errors.push("Two tides share " + row[0] + ".");
+    else seen.add(min);
+    if (!Number.isFinite(height)) errors.push("A tide height is not a number.");
+    if (min !== null && Number.isFinite(height)) extremes.push({ min, height });
+  });
+  if (extremes.length < 2) errors.push("Enter at least two tide extremes.");
+  if (errors.length) {
+    out.innerHTML = '<div class="error">' + errors.map((error) => "<p>" + error + "</p>").join("") + "</div>";
+    return;
+  }
+  const marks = windowTide(start, extremes);
+  const verticalAt = (tide) => chartDepth + tide + freeboard;
+  const dHigh = verticalAt(marks.maxH);
+  const dLow = verticalAt(marks.minH);
+  if (dHigh <= 0 || dLow <= 0) {
+    out.innerHTML = '<div class="error"><p>Roller-to-seabed is not positive. Check chart depth, tide, and freeboard.</p></div>';
+    return;
+  }
+  const workingRode = scopeTarget * dHigh;
+  const horizontal = Math.sqrt(Math.max(0, workingRode * workingRode - dLow * dLow));
+  const swing = horizontal + bridleForward + loa;
+  const totalVeer = workingRode + bridleLoop;
+  const underKeel = chartDepth + marks.minH - DRAFT;
+  const reasons = [];
+  if (totalVeer > chainOnBoard + 0.05) reasons.push("The gypsy must veer " + metres(totalVeer) + " and only " + metres(chainOnBoard) + " is on board.");
+  if (swing > clearance + 0.05) reasons.push("Low-water swing radius is " + metres(swing) + " and the nearest hazard is " + metres(clearance) + " from the anchor.");
+  if (underKeel < KEEL) reasons.push("Low water leaves " + metres(underKeel) + " under the keel. Keep at least " + metres(KEEL) + ".");
+  const cleared = reasons.length === 0;
+  const seconds = Math.round(totalVeer * 2);
+  const windlass = Math.floor(seconds / 60) + " min " + String(seconds % 60).padStart(2, "0") + " s";
+  out.innerHTML =
+    '<div class="result">' +
+    '<p class="label">CHAIN TO PUT OUT</p>' +
+    '<p class="metres">' + metres(workingRode) + "</p>" +
+    "<p>Plus " + metres(bridleLoop) + " of bridle loop. Veer " + metres(totalVeer) + " off the gypsy, about " + windlass + ".</p>" +
+    '<p class="quiet">High water ' + marks.maxH.toFixed(2) + " m at " + formatClock(marks.maxAt) +
+    ". Roller depth " + metres(dHigh) + ". Scope " + (workingRode / dHigh).toFixed(2) + ":1.</p>" +
+    '<p class="' + (cleared ? "ok" : "bad") + '">' +
+    (cleared ? "Low-water swing " + metres(swing) + " fits inside " + metres(clearance) + "." : reasons[0]) +
+    "</p></div>";
+}
+document.getElementById("scopes").addEventListener("click", (event) => {
+  const button = event.target.closest("button");
+  if (!button) return;
+  scopeTarget = Number(button.dataset.scope);
+  document.querySelectorAll("#scopes button").forEach((item) => {
+    item.setAttribute("aria-pressed", item === button ? "true" : "false");
+  });
+  render();
+});
+document.getElementById("add").addEventListener("click", () => {
+  tides.push(["12:00", "1"]);
+  paintTides();
+  render();
+});
+document.getElementById("calc").addEventListener("input", (event) => {
+  if (event.target.closest("#tides")) return;
+  render();
+});
+paintTides();
+render();
+</script>
+</body>
+</html>

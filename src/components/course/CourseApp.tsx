@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { ChainWidget } from "@/components/widget/ChainWidget";
 import { ApproachCourse } from "@/components/course/ApproachCourse";
 import { Calculator } from "@/components/course/Calculator";
 import { BridleLesson, BriefLesson, ScopeLesson, SixLesson, SwingLesson } from "@/components/course/lessons";
@@ -23,7 +24,7 @@ export function CourseApp() {
   const scormRef = useRef<ScormHandle | null>(null);
   const dirty = useRef(false);
   const stateRef = useRef<CourseState | null>(null);
-  const [module, setModule] = useState<"scope" | "approach">("approach");
+  const [module, setModule] = useState<"scope" | "approach" | "chain">("chain");
   const [mode, setMode] = useState<"lms" | "preview">("preview");
   const [tick, setTick] = useState(0);
   const [plan, setPlan] = useState<PlanInput>(() => clonePlan(ASSESSMENT));
@@ -128,6 +129,8 @@ export function CourseApp() {
               <span className={`rounded-full border px-3 py-2 text-xs ${passed ? "border-brass text-brass" : "border-line text-muted"}`}>
                 {passed ? "Passed" : state.bestScore !== null && score.complete && state.bestScore < MASTERY ? "Failed" : "In progress"}
               </span>
+            ) : module === "chain" ? (
+              <span className="rounded-full border border-line px-3 py-2 text-xs text-muted">Widget</span>
             ) : (
               <span className="rounded-full border border-line px-3 py-2 text-xs text-muted">Follow-on</span>
             )}
@@ -150,6 +153,14 @@ export function CourseApp() {
           >
             Approach
           </button>
+          <button
+            type="button"
+            aria-pressed={module === "chain"}
+            className={`h-11 rounded-full px-3 text-sm ${module === "chain" ? "bg-brass text-brass-ink" : "text-muted"}`}
+            onClick={() => setModule("chain")}
+          >
+            Chain
+          </button>
         </div>
         {module === "scope" ? (
           <div className="mx-auto flex max-w-3xl gap-2 overflow-x-auto px-4 pb-3">
@@ -168,6 +179,7 @@ export function CourseApp() {
         ) : null}
       </header>
 
+      {module === "chain" ? null : (
       <figure className="mx-auto max-w-3xl px-4 pt-4">
         <img
           src="/brand/impulso.jpg"
@@ -176,8 +188,13 @@ export function CourseApp() {
         />
         <figcaption className="mt-2 text-xs tracking-widest text-muted">IMPULSO · LAGOON 39 · PITTWATER</figcaption>
       </figure>
+      )}
 
-      {module === "approach" ? (
+      {module === "chain" ? (
+        <div className="mx-auto max-w-xl pb-16">
+          <ChainWidget />
+        </div>
+      ) : module === "approach" ? (
         <ApproachCourse />
       ) : (
       <>
